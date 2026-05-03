@@ -88,7 +88,7 @@ http://localhost:3000
 | GET    | /products      | Get all products  |
 | GET    | /products/{id} | Get product by ID |
 | POST   | /products      | Add new product   |
-| PATCH  | /products/{id} | Update product    |
+| PUT    | /products/{id} | Update product    |
 | DELETE | /products/{id} | Delete product    |
 
 ---
