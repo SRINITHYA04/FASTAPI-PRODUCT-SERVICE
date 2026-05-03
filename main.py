@@ -1,10 +1,17 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from models import Product, Products
 from Database_Config import session, engine
 import Database_Models
 from sqlalchemy.orm import Session
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"]
+)
 
 Database_Models.Base.metadata.create_all(bind = engine)
 
@@ -46,7 +53,7 @@ def get_all_prodcuts(db: Session = Depends(get_db)):
 
 # 2. get the product detail by Id
 @app.get("/products/{prod_id}")
-def get_Product(prod_id: int, db: Session = Depends(get_db)):
+def get_product(prod_id: int, db: Session = Depends(get_db)):
 
     db_product = db.query(Database_Models.Product).filter(Database_Models.Product.id == prod_id).first()
 
@@ -58,15 +65,17 @@ def get_Product(prod_id: int, db: Session = Depends(get_db)):
 
 # 3. Add a new product to the DB
 @app.post("/products")
-def add_product(Prod_data: Product, db: Session = Depends(get_db)):
-
-    db.add(Database_Models.Product(** Prod_data.model_dump()))
+def add_product(prod_data: Product, db: Session = Depends(get_db)):
+    new_product = Database_Models.Product(**prod_data.model_dump())
+    db.add(new_product)
     db.commit()
-    return "Data added successfully"
+    db.refresh(new_product)
+
+    return new_product
 
 
 # 4.  Update a product in the DB
-@app.patch("/products/{prod_id}")
+@app.put("/products/{prod_id}")
 def update_product(prod_id: int, prod_data: Products, db: Session = Depends(get_db)):
 
     db_product = db.query(Database_Models.Product)\
@@ -90,6 +99,7 @@ def update_product(prod_id: int, prod_data: Products, db: Session = Depends(get_
 #5. Delete a product from DB
 @app.delete("/products/{prod_id}")
 def delete_a_product(prod_id: int, db: Session = Depends(get_db)):
+
     db_product = db.query(Database_Models.Product)\
                    .filter(Database_Models.Product.id == prod_id)\
                    .first()
@@ -99,4 +109,4 @@ def delete_a_product(prod_id: int, db: Session = Depends(get_db)):
     
     db.delete(db_product)
     db.commit()
-    return "Data deleted successfully"
+    return {"message": "Product deleted successfully"}
