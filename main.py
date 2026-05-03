@@ -1,7 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from models import Product, Products
+from Database_Config import session, engine
+import Database_Models
 
 app = FastAPI()
+
+Database_Models.Base.metadata.create_all(bind = engine)
 
 @app.get('/')
 def greet():
@@ -18,6 +22,8 @@ products=[
 # 1. get all the products details
 @app.get("/products")
 def get_all_prodcuts():
+    db = session()
+    db.query()
     return products
 
 # 2. get the product detail by Id
