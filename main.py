@@ -19,11 +19,22 @@ products=[
     Product(id=4, name="power bank",price=199, description="handy current ", quantity=25)
 ]
 
+def init_db():
+    db = session()
+    cnt = db.query(Database_Models.Product).count()
+
+    if cnt == 0:
+        for product in products:
+            db.add(Database_Models.Product(** product.model_dump()))
+        db.commit()
+init_db()
+
+
 # 1. get all the products details
 @app.get("/products")
 def get_all_prodcuts():
-    db = session()
-    db.query()
+    # db = session()
+    # db.query()
     return products
 
 # 2. get the product detail by Id
