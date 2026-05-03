@@ -65,27 +65,38 @@ def add_product(Prod_data: Product, db: Session = Depends(get_db)):
     return "Data added successfully"
 
 
-
-# # 4.  Update a product in the DB
+# 4.  Update a product in the DB
 @app.patch("/products/{prod_id}")
-def update_product(prod_id: int, prod_data: Products):
-    for index, prod in enumerate(products):
-        if prod.id == prod_id:
-            update_data = prod_data.model_dump(exclude_unset=True)
+def update_product(prod_id: int, prod_data: Products, db: Session = Depends(get_db)):
 
-            updated_product = prod.model_copy(update=update_data)
+    db_product = db.query(Database_Models.Product)\
+                   .filter(Database_Models.Product.id == prod_id)\
+                   .first()
 
-            products[index] = updated_product
-            return updated_product
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Data Not Found")
 
-    raise HTTPException(status_code=404, detail="Data Not Found")
+    update_data = prod_data.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_product, key, value)
+
+    db.commit()
+    db.refresh(db_product)
+
+    return db_product
 
 
 #5. Delete a product from DB
 @app.delete("/products/{prod_id}")
-def delete_a_product(prod_id: int):
-    for prod in products:
-        if prod.id == prod_id:
-            products.remove(prod)
-            return prod
-    raise HTTPException(status_code=404, detail="Data Not Found ")
+def delete_a_product(prod_id: int, db: Session = Depends(get_db)):
+    db_product = db.query(Database_Models.Product)\
+                   .filter(Database_Models.Product.id == prod_id)\
+                   .first()
+
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Data Not Found")
+    
+    db.delete(db_product)
+    db.commit()
+    return "Data deleted successfully"
