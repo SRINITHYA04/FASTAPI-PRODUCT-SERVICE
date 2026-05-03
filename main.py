@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from models import Product, Products
 from Database_Config import session, engine
 import Database_Models
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
@@ -29,28 +30,41 @@ def init_db():
         db.commit()
 init_db()
 
+def get_db():
+    db = session()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # 1. get all the products details
 @app.get("/products")
-def get_all_prodcuts():
-    # db = session()
-    # db.query()
-    return products
+def get_all_prodcuts(db: Session = Depends(get_db)):
+    db_products = db.query(Database_Models.Product).all()
+    return db_products
 
 # 2. get the product detail by Id
 @app.get("/products/{prod_id}")
-def get_Product(prod_id: int):
-    for prod in products:
-        if prod.id == prod_id:
-            return prod
-    raise HTTPException(status_code=404, detail="Data Not Found ")
+def get_Product(prod_id: int, db: Session = Depends(get_db)):
+
+    db_product = db.query(Database_Models.Product).filter(Database_Models.Product.id == prod_id).first()
+
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Data Not Found")
+    
+    return db_product
 
 
 # 3. Add a new product to the DB
 @app.post("/products")
-def add_product(Prod_data: Product):
-    products.append(Prod_data)
-    return Prod_data
+def add_product(Prod_data: Product, db: Session = Depends(get_db)):
+
+    db.add(Database_Models.Product(** Prod_data.model_dump()))
+    db.commit()
+    return "Data added successfully"
+
+
 
 # # 4.  Update a product in the DB
 @app.patch("/products/{prod_id}")
