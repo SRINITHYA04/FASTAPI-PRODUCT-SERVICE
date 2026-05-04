@@ -1,36 +1,44 @@
 # 🚀 Product Trac – Full Stack Inventory App
 
-A full-stack product management application built using **FastAPI**, **MySQL**, and **React**.
+**Product Trac** is a full-stack web application designed to manage product inventory efficiently. It allows users to perform complete CRUD (Create, Read, Update, Delete) operations on products through a clean UI and a RESTful backend API.
+
+The backend is built using **FastAPI**, providing high-performance API endpoints, while the frontend delivers a simple and intuitive interface for interacting with the system. The application uses **MySQL** as the database and integrates **SQLAlchemy ORM** for seamless database operations.
+
+This project demonstrates core backend development concepts such as API design, request validation, database integration, and deployment, along with frontend-backend communication in a real-world setup.
 
 ---
 
-## ✨ Features
+## 🚀 Key Features
 
-- Add new products
-- View all products
-- Update product details
-- Delete products
-- Search products
-- FastAPI backend with MySQL
-- React frontend UI
+- 📦 Add new products with details like name, price, description, and quantity  
+- 📋 View all available products  
+- 🔍 Fetch individual product details by ID  
+- ✏️ Update product information (partial updates supported)  
+- 🗑️ Delete products from the database  
+- 🔗 Fully integrated frontend and backend  
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Backend**
-
-- FastAPI
-- SQLAlchemy
-- MySQL
-- Pydantic
-
-**Frontend**
-
-- React
-- CSS
+- **Backend:** FastAPI, Python  
+- **Frontend:** HTML, CSS, JavaScript  
+- **Database:** MySQL (Railway hosted)  
+- **ORM:** SQLAlchemy  
+- **Validation:** Pydantic  
+- **Server:** Uvicorn  
 
 ---
+## 🎯 Purpose of the Project
+
+This project was built to:
+- Strengthen backend development skills using FastAPI  
+- Understand database integration with SQLAlchemy  
+- Learn full-stack communication between frontend and backend  
+- Gain hands-on experience in deploying real-world applications  
+
+---
+
 
 ## ⚙️ Quick Setup
 
